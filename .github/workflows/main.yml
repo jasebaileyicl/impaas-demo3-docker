@@ -2,15 +2,31 @@ name: Build
 on: [push]
 
 jobs:
-  deploy-to-impaas:
-   runs-on: ubuntu-latest
-   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: ImPaaS-Deploy
-      id: impaas-deploy
-      uses: /impaas/impaas-deploy@v3
-      with:
-        app-name: dockerappdemo1
-        deployment-token: ${{secrets.IMPAAS_DEPLOY_TOKEN}}
-        method: PLATFORM
+  deploy-impaas:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      TSURU_TOKEN: ${{secrets.IMPAAS_DEPLOY_TOKEN}}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install tsuru CLI
+        run: curl -fsSL "https://tsuru.io/get" | bash
+      - name: Add impaas target
+        run: tsuru target add impaas https://impaas.uk -s
+      - name: Deploy app
+        run: tsuru app deploy -a dockerappdemo1 --dockerfile .
+
+
+  # deploy-to-impaas:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
+  #   - name: ImPaaS-Deploy
+  #     id: impaas-deploy
+  #     uses: /impaas/impaas-deploy@v3
+  #     with:
+  #       app-name: dockerappdemo1
+  #       deployment-token: ${{secrets.IMPAAS_DEPLOY_TOKEN}}
+  #       method: PLATFORM
