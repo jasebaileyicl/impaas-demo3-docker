@@ -11,6 +11,6 @@ jobs:
       id: impaas-deploy
       uses: /impaas/impaas-deploy@v3
       with:
-        app-name: app12024demo1
+        app-name: dockerappdemo1
         deployment-token: ${{secrets.IMPAAS_DEPLOY_TOKEN}}
         method: PLATFORM
